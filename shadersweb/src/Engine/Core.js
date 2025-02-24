@@ -1,6 +1,7 @@
-﻿export async function CreateWebGPUCanvas (width, height){
+﻿
+export async function CreateWebGPUCanvas (width, height){
 
-    const canvas = document.createElement("canvas");
+    let canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
     if (!navigator.gpu) {
