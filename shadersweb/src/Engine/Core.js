@@ -1,5 +1,5 @@
 ﻿
-export async function CreateWebGPUCanvas (width, height){
+export async function CreateWebGPUCanvas (width, height, shaderCode){
 
     let canvas = document.createElement("canvas");
     canvas.width = width;
@@ -54,30 +54,9 @@ export async function CreateWebGPUCanvas (width, height){
 
     const ShaderModule = device.createShaderModule({
         label: "Base Shader",
-        code: `
+        code: shaderCode,
 
-                  struct VertexOut{
-                      @builtin(position) position: vec4f,
-                      @location(0) col: vec4f,
-                  };
-
-                  @vertex
-                      fn vertexMain(@location(0) pos: vec2f) ->
-                      VertexOut {
-                      var vertexOut: VertexOut;
-                      vertexOut.position = vec4f(pos, 0, 1);
-                      vertexOut.col = vec4f(pos, 1, 1);
-                      return vertexOut;
-
-                  }
-
-                  @fragment
-                      fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
-                      return vec4f(inData.col);
-                  }
-          `
-
-    });
+});
 
     const Pipeline = device.createRenderPipeline({
         label: "Graphics Pipeline",

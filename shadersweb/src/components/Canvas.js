@@ -20,6 +20,7 @@
 // export default CanvasWidget;
 import React, { useEffect, useRef, useState } from "react";
 import { CreateWebGPUCanvas } from "../Engine/Core";
+import ShaderEditor from "./Editor";
 
 function CanvasWidget() {
 	const canvasElement = useRef(null);
@@ -28,12 +29,33 @@ function CanvasWidget() {
 	const requestRef = useRef(null);
 	const prevTimeRef = useRef(0);
 	const frameCount = useRef(0);
+	const [shaderCode, setShaderCode] = useState(`
+		struct VertexOut{
+                      @builtin(position) position: vec4f,
+                      @location(0) col: vec4f,
+                  };
+
+                  @vertex
+                      fn vertexMain(@location(0) pos: vec2f) ->
+                      VertexOut {
+                      var vertexOut: VertexOut;
+                      vertexOut.position = vec4f(pos, 0, 1);
+                      vertexOut.col = vec4f(pos, 1, 1);
+                      return vertexOut;
+
+                  }
+
+                  @fragment
+                      fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
+                      return vec4f(inData.col);
+                  }
+	`);
 
 	useEffect(() => {
 		let canvasInstance;
 		const canvasContainer = canvasElement.current; // Capture the current ref value
 
-		CreateWebGPUCanvas(800, 800).then((canvas) => {
+		CreateWebGPUCanvas(800, 800, shaderCode).then((canvas) => {
 			canvasInstance = canvas;
 			if (canvasContainer) {
 				canvasContainer.appendChild(canvas);
@@ -69,26 +91,38 @@ function CanvasWidget() {
 			}
 			cancelAnimationFrame(requestRef.current);
 		};
-	}, [isPlaying]);
+	}, [isPlaying, shaderCode]);
 
 	const togglePlayPause = () => {
 		setIsPlaying(!isPlaying);
 	};
 
+	const handleShaderCode = (value) => {
+		setShaderCode(value);
+	}
+
 	return (
-		<div className="player-window" style={styles.playerWindow}>
-			<div ref={canvasElement} style={styles.canvasContainer}></div>
-			<div className="controls" style={styles.controls}>
-				<button onClick={togglePlayPause}>
-					{isPlaying ? "Pause" : "Play"}
-				</button>
-				<span style={styles.fpsCounter}>FPS: {fps}</span>
+		<div style={styles.container}>
+			<div className="player-window" style={styles.playerWindow}>
+				<div ref={canvasElement} style={styles.canvasContainer}></div>
+				<div className="controls" style={styles.controls}>
+					<button onClick={togglePlayPause}>
+						{isPlaying ? "Pause" : "Play"}
+					</button>
+					<span style={styles.fpsCounter}>FPS: {fps}</span>
+				</div>
 			</div>
+			<ShaderEditor shaderCode={shaderCode} handleShaderCode={handleShaderCode}/>
 		</div>
 	);
 }
 
 const styles = {
+	container: {
+		display: "flex",
+		justifyContent: "space-between",
+		height: "100vh",
+	},
 	playerWindow: {
 		border: "2px solid #333",
 		borderRadius: "8px",
