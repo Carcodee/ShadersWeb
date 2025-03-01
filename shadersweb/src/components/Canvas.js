@@ -46,7 +46,9 @@ function CanvasWidget() {
                   }
 
                   @fragment
+                 
                       fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
+                      let time = f32(Date.now() / 1000.0) * 0.5;
                       return vec4f(inData.col);
                   }
 	`);
