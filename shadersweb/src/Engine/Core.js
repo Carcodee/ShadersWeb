@@ -1,4 +1,15 @@
 ﻿
+import { WgslReflect } from "wgsl_reflect/wgsl_reflect.module";
+
+
+function CreateBuffer(device, name, size, usage){
+    return device.createBuffer({
+        label: name,
+        size: size,
+        usage: usage,
+    });
+}
+
 export async function CreateWebGPUCanvas (width, height, shaderCode){
 
     let canvas = document.createElement("canvas");
@@ -24,22 +35,19 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
         }
     )
 
+    const reflect = new WgslReflect(shaderCode);
+
     const vertices = new Float32Array([
-        //   X,    Y,
-        -0.8, -0.8, // Triangle 1 (Blue)
+        -0.8, -0.8,
         0.8, -0.8,
         0.8,  0.8,
 
-        -0.8, -0.8, // Triangle 2 (Red)
+        -0.8, -0.8,
         0.8,  0.8,
         -0.8,  0.8,
     ]);
 
-    const vertexBuffer = device.createBuffer({
-        label: "Cell vertices",
-        size: vertices.byteLength,
-        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-    });
+    const vertexBuffer = CreateBuffer(device, "Cell vertices", vertices.byteLength, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST);
 
     device.queue.writeBuffer(vertexBuffer, 0, vertices);
 
@@ -55,12 +63,39 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
     const ShaderModule = device.createShaderModule({
         label: "Base Shader",
         code: shaderCode,
+    });
 
-});
+    const bufferSize = 4 * 4; //vec4
+    const uniformBuffer = CreateBuffer(device, "BufferTest", bufferSize, GPUBufferUsage.UNIFORM, GPUBufferUsage.COPY_DST);
+
+    const data = new Float32Array([1.0, 0.5, 1.0, 1.0]);
+
+    const bindGroupLayout = device.createBindGroupLayout({
+        entries: [{
+            binding: 0,
+            visibility: GPUShaderStage.FRAGMENT,
+            buffer: { type: "uniform" },
+        }],
+    })
+
+    const bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [{
+            binding: 0,
+            resource: { buffer: uniformBuffer},
+        }],
+    })
+
+
+    const pipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [bindGroupLayout]
+    });
+
+    device.queue.writeBuffer(uniformBuffer, 0, data);
 
     const Pipeline = device.createRenderPipeline({
         label: "Graphics Pipeline",
-        layout: "auto",
+        layout: pipelineLayout,
         vertex: {
             module: ShaderModule,
             entryPoint: "vertexMain",
@@ -87,6 +122,7 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
     )
 
     renderPass.setPipeline(Pipeline);
+    renderPass.setBindGroup(0, bindGroup);
     renderPass.setVertexBuffer(0, vertexBuffer);
     renderPass.draw(vertices.length/2);
 

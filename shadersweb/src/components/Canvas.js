@@ -30,27 +30,31 @@ function CanvasWidget() {
 	const prevTimeRef = useRef(0);
 	const frameCount = useRef(0);
 	const [shaderCode, setShaderCode] = useState(`
-		struct VertexOut{
-                      @builtin(position) position: vec4f,
-                      @location(0) col: vec4f,
-                  };
 
-                  @vertex
-                      fn vertexMain(@location(0) pos: vec2f) ->
-                      VertexOut {
-                      var vertexOut: VertexOut;
-                      vertexOut.position = vec4f(pos, 0, 1);
-                      vertexOut.col = vec4f(pos, 1, 1);
-                      return vertexOut;
+struct VertexOut {
+    @builtin(position) position: vec4f,
+    @location(0) col: vec4f,
+};
 
-                  }
+struct Uniform{
+	test: vec4f,
+}
 
-                  @fragment
-                 
-                      fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
-                      let time = f32(Date.now() / 1000.0) * 0.5;
-                      return vec4f(inData.col);
-                  }
+@group(0) @binding(0) var<uniform> uniformTest: Uniform;
+
+@vertex
+fn vertexMain(@location(0) pos: vec2f) -> VertexOut {
+    var vertexOut: VertexOut;
+    vertexOut.position = vec4f(pos, 0, 1);
+    vertexOut.col = vec4f(pos, 1, 1);
+    return vertexOut;
+}
+
+@fragment
+fn fragmentMain(@location(0) inData: VertexOut) -> @location(0) vec4f { // ✅ Fix input location
+    return inData.col;
+}
+
 	`);
 
 	useEffect(() => {
