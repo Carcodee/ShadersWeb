@@ -10,6 +10,35 @@ function CreateBuffer(device, name, size, usage){
     });
 }
 
+function CreateTexture(device,width, height, format, usage){
+    return device.createTexture({
+        size: [width, height, 1],
+        format: format,
+        usage: usage,
+    });
+}
+async function LoadTexture(device, url){
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+
+    const imageBitmap = await createImageBitmap(img);
+
+    const texture = CreateTexture(device,
+                                  img.width,
+                                  img.height,
+                                  "rgba8unorm",
+                                  GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT)
+
+    device.queue.copyExternalImageToTexture(
+        {source: imageBitmap},
+        {texture: texture},
+        [imageBitmap.width, imageBitmap.height, 1]);
+
+    return texture;
+
+}
+
 export async function CreateWebGPUCanvas (width, height, shaderCode){
 
     let canvas = document.createElement("canvas");
