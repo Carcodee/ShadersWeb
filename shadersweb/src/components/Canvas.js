@@ -51,7 +51,7 @@ fn vertexMain(@location(0) pos: vec2f) -> VertexOut {
 }
 
 @fragment
-fn fragmentMain(@location(0) inData: VertexOut) -> @location(0) vec4f { // ✅ Fix input location
+fn fragmentMain(inData: VertexOut) -> @location(0) vec4f { // ✅ Fix input location
     return inData.col;
 }
 
