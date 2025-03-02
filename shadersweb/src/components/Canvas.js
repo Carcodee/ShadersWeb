@@ -31,9 +31,13 @@ function CanvasWidget() {
 	const frameCount = useRef(0);
 	const [shaderCode, setShaderCode] = useState(`
 
+struct VertexIn {
+    @location(0) pos: vec2f,
+    @location(1) uv: vec2f,
+};
 struct VertexOut {
     @builtin(position) position: vec4f,
-    @location(0) col: vec4f,
+    @location(1) uv: vec2f,
 };
 
 struct Uniform{
@@ -41,18 +45,21 @@ struct Uniform{
 }
 
 @group(0) @binding(0) var<uniform> uniformTest: Uniform;
+@group(0) @binding(1) var myTexture: texture_2d<f32>;
+@group(0) @binding(2) var mySampler: sampler;
 
 @vertex
-fn vertexMain(@location(0) pos: vec2f) -> VertexOut {
+fn vertexMain(inData: VertexIn) -> VertexOut {
     var vertexOut: VertexOut;
-    vertexOut.position = vec4f(pos, 0, 1);
-    vertexOut.col = vec4f(pos, 1, 1);
+    vertexOut.position = vec4f(inData.pos, 0, 1);
+    vertexOut.uv = vec2f(inData.uv);
     return vertexOut;
 }
 
 @fragment
 fn fragmentMain(inData: VertexOut) -> @location(0) vec4f { 
-    return inData.col;
+	
+    return textureSample(myTexture, mySampler, inData.uv);
 }
 
 	`);

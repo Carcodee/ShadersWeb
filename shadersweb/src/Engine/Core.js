@@ -1,60 +1,20 @@
 ﻿
 import { WgslReflect } from "wgsl_reflect/wgsl_reflect.module";
+import { EngineUtils } from "./EngineUtils";
+import { Device } from "./Device";
 
-
-function CreateBuffer(device, name, size, usage){
-    return device.createBuffer({
-        label: name,
-        size: size,
-        usage: usage,
-    });
-}
-
-function CreateTexture(device,width, height, format, usage){
-    return device.createTexture({
-        size: [width, height, 1],
-        format: format,
-        usage: usage,
-    });
-}
-async function LoadTexture(device, url){
-    const img = new Image();
-    img.src = url;
-    await img.decode();
-
-    const imageBitmap = await createImageBitmap(img);
-
-    const texture = CreateTexture(device,
-                                  img.width,
-                                  img.height,
-                                  "rgba8unorm",
-                                  GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT)
-
-    device.queue.copyExternalImageToTexture(
-        {source: imageBitmap},
-        {texture: texture},
-        [imageBitmap.width, imageBitmap.height, 1]);
-
-    return texture;
-
-}
 
 export async function CreateWebGPUCanvas (width, height, shaderCode){
 
     let canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
-    if (!navigator.gpu) {
-        throw new Error("WebGPU not supported on this browser.");
-    }
-    const adapter = await navigator.gpu.requestAdapter();
-    if(!adapter){
-        throw new Error("No appropiate gpu adapter found.");
-    }
-    const device = await adapter.requestDevice();
-    if (!device) {
-        throw new Error("No appropiate device.");
-    }
+
+    const webDevice = new Device();
+    await webDevice.Init();
+
+    const device = webDevice.device;
+
     const context = canvas.getContext("webgpu");
     const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
     context.configure(
@@ -67,26 +27,26 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
     const reflect = new WgslReflect(shaderCode);
 
     const vertices = new Float32Array([
-        -0.8, -0.8,
-        0.8, -0.8,
-        0.8,  0.8,
+        // Position     // UV
+        -1.0, -1.0,     0.0, 1.0,  // Bottom-left
+        1.0, -1.0,     1.0, 1.0,  // Bottom-right
+        1.0,  1.0,     0.0, 1.0,  // Top-right
 
-        -0.8, -0.8,
-        0.8,  0.8,
-        -0.8,  0.8,
+        -1.0, -1.0,     0.0, 1.0,  // Bottom-left (second triangle)
+        1.0,  1.0,     1.0, 1.0,  // Top-right
+        -1.0,  1.0,     0.0, 0.0,  // Top-left
     ]);
 
-    const vertexBuffer = CreateBuffer(device, "Cell vertices", vertices.byteLength, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST);
+    const vertexBuffer = EngineUtils.CreateBuffer(device, "Cell vertices", vertices.byteLength, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST);
 
     device.queue.writeBuffer(vertexBuffer, 0, vertices);
 
     const vertexBufferLayout = {
-        arrayStride: 8,
-        attributes: [{
-            format: "float32x2",
-            offset: 0,
-            shaderLocation: 0,
-        }]
+        arrayStride: 16,
+        attributes: [
+            {format: "float32x2", offset: 0, shaderLocation: 0,},
+            {format: "float32x2", offset: 0, shaderLocation: 1,},
+        ]
     };
 
     const ShaderModule = device.createShaderModule({
@@ -95,24 +55,33 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
     });
 
     const bufferSize = 4 * 4; //vec4
-    const uniformBuffer = CreateBuffer(device, "BufferTest", bufferSize, GPUBufferUsage.UNIFORM, GPUBufferUsage.COPY_DST);
+    const uniformBuffer = EngineUtils.CreateBuffer(device, "BufferTest", bufferSize, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST);
 
     const data = new Float32Array([1.0, 0.5, 1.0, 1.0]);
 
+
+    const sampler = device.createSampler({
+        magFilter: "linear",
+        minFilter: "linear",
+    });
+    const textureObj = await EngineUtils.LoadTexture(device, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Happy_smiley_face.png/800px-Happy_smiley_face.png");
+
+
     const bindGroupLayout = device.createBindGroupLayout({
-        entries: [{
-            binding: 0,
-            visibility: GPUShaderStage.FRAGMENT,
-            buffer: { type: "uniform" },
-        }],
+        entries: [
+            {binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "uniform" }},
+            {binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: {}},
+            {binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: {}},
+        ],
     })
 
     const bindGroup = device.createBindGroup({
         layout: bindGroupLayout,
-        entries: [{
-            binding: 0,
-            resource: { buffer: uniformBuffer},
-        }],
+        entries: [
+            {binding: 0, resource: { buffer: uniformBuffer},},
+            {binding: 1, resource: textureObj.textureView},
+            {binding: 2, resource: sampler},
+        ],
     })
 
 
@@ -153,7 +122,7 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
     renderPass.setPipeline(Pipeline);
     renderPass.setBindGroup(0, bindGroup);
     renderPass.setVertexBuffer(0, vertexBuffer);
-    renderPass.draw(vertices.length/2);
+    renderPass.draw(6);
 
     renderPass.end();
     const commandBuffer = encoder.finish();
