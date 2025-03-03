@@ -5,6 +5,8 @@ class PipelineBuilder{
     canvasFormat;
     vertexBufferLayout;
     shaderModule;
+    pipelineLayout;
+    colorAttachmentTargets = []
 
     PipelineBuilder(device){
         this.device = device;
@@ -16,7 +18,30 @@ class PipelineBuilder{
         this.vertexBufferLayout = vertexBufferLayout;
     }
     SetShaderModule(shaderModule){
-        this.shaderModuele = shaderModule;
+        this.shaderModule = shaderModule;
     }
+    SetPipelineLayout(pipelineLayout){
+        this.pipelineLayout = pipelineLayout;
+    }
+
+    Build(device){
+
+        const pipeline = device.createRenderPipeline({
+            label: "Graphics Pipeline",
+            layout: this.pipelineLayout,
+            vertex: {
+                module: this.shaderModule,
+                entryPoint: "vertexMain",
+                buffers: [this.vertexBufferLayout]
+            },
+            fragment: {
+                module: this.shaderModule,
+                entryPoint: "fragmentMain",
+                targets: this.colorAttachmentTargets,
+            }
+        });
+        return pipeline;
+    }
+
 
 }

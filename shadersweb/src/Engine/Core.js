@@ -2,6 +2,7 @@
 import { WgslReflect } from "wgsl_reflect/wgsl_reflect.module";
 import { EngineUtils } from "./EngineUtils";
 import { Device } from "./Device";
+import { BindGroupBuilder } from "./BindGroupBuilder";
 
 
 export async function CreateWebGPUCanvas (width, height, shaderCode){
@@ -59,6 +60,7 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
 
     const data = new Float32Array([1.0, 0.5, 1.0, 1.0]);
 
+    device.queue.writeBuffer(uniformBuffer, 0, data);
 
     const sampler = device.createSampler({
         magFilter: "linear",
@@ -67,29 +69,19 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
     const textureObj = await EngineUtils.LoadTexture(device, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Happy_smiley_face.png/800px-Happy_smiley_face.png");
 
 
-    const bindGroupLayout = device.createBindGroupLayout({
-        entries: [
-            {binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "uniform" }},
-            {binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: {}},
-            {binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: {}},
-        ],
-    })
+    const bindGroupBuilder = new BindGroupBuilder();
+    bindGroupBuilder
+        .AddBuffer(0, GPUShaderStage.FRAGMENT, { type: "uniform" },{ buffer : uniformBuffer})
+        .AddImage(1, GPUShaderStage.FRAGMENT, textureObj.textureView)
+        .AddSampler(2, GPUShaderStage.FRAGMENT, sampler);
 
-    const bindGroup = device.createBindGroup({
-        layout: bindGroupLayout,
-        entries: [
-            {binding: 0, resource: { buffer: uniformBuffer},},
-            {binding: 1, resource: textureObj.textureView},
-            {binding: 2, resource: sampler},
-        ],
-    })
+    const bindGroupObj = bindGroupBuilder.Build(device);
 
 
     const pipelineLayout = device.createPipelineLayout({
-        bindGroupLayouts: [bindGroupLayout]
+        bindGroupLayouts: [bindGroupObj.BindGroupLayout]
     });
 
-    device.queue.writeBuffer(uniformBuffer, 0, data);
 
     const Pipeline = device.createRenderPipeline({
         label: "Graphics Pipeline",
@@ -120,7 +112,7 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
     )
 
     renderPass.setPipeline(Pipeline);
-    renderPass.setBindGroup(0, bindGroup);
+    renderPass.setBindGroup(0, bindGroupObj.bindGroup);
     renderPass.setVertexBuffer(0, vertexBuffer);
     renderPass.draw(6);
 
