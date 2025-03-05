@@ -1,27 +1,28 @@
 ﻿
-class PipelineBuilder{
+export class PipelineBuilder{
 
-    device;
-    canvasFormat;
     vertexBufferLayout;
     shaderModule;
     pipelineLayout;
-    colorAttachmentTargets = []
+    colorAttachmentTargets = [];
 
-    PipelineBuilder(device){
-        this.device = device;
-    }
-    SetCanvasFormat(canvasFormat){
-        this.canvasFormat = canvasFormat;
+    constructor() {
     }
     SetVertexBufferLayout(vertexBufferLayout){
         this.vertexBufferLayout = vertexBufferLayout;
+        return this;
     }
     SetShaderModule(shaderModule){
         this.shaderModule = shaderModule;
+        return this;
     }
     SetPipelineLayout(pipelineLayout){
         this.pipelineLayout = pipelineLayout;
+        return this;
+    }
+    AddColorAttachmentTarget(colorAttachmentTarget){
+        this.colorAttachmentTargets.push(colorAttachmentTarget);
+        return this;
     }
 
     Build(device){

@@ -3,6 +3,7 @@ import { WgslReflect } from "wgsl_reflect/wgsl_reflect.module";
 import { EngineUtils } from "./EngineUtils";
 import { Device } from "./Device";
 import { BindGroupBuilder } from "./BindGroupBuilder";
+import { PipelineBuilder } from "./PipelineBuilder";
 
 
 export async function CreateWebGPUCanvas (width, height, shaderCode){
@@ -82,23 +83,33 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
         bindGroupLayouts: [bindGroupObj.BindGroupLayout]
     });
 
+    const pipelineBuilder = new PipelineBuilder();
 
-    const Pipeline = device.createRenderPipeline({
-        label: "Graphics Pipeline",
-        layout: pipelineLayout,
-        vertex: {
-            module: ShaderModule,
-            entryPoint: "vertexMain",
-            buffers: [vertexBufferLayout]
-        },
-        fragment: {
-            module: ShaderModule,
-            entryPoint: "fragmentMain",
-            targets: [{
-                format: canvasFormat
-            }],
-        }
-    })
+    pipelineBuilder
+        .SetVertexBufferLayout(vertexBufferLayout)
+        .SetShaderModule(ShaderModule)
+        .SetPipelineLayout(pipelineLayout)
+        .AddColorAttachmentTarget({format: canvasFormat})
+
+    const pipeline = pipelineBuilder.Build(device);
+
+
+    // const Pipeline = device.createRenderPipeline({
+    //     label: "Graphics Pipeline",
+    //     layout: pipelineLayout,
+    //     vertex: {
+    //         module: ShaderModule,
+    //         entryPoint: "vertexMain",
+    //         buffers: [vertexBufferLayout]
+    //     },
+    //     fragment: {
+    //         module: ShaderModule,
+    //         entryPoint: "fragmentMain",
+    //         targets: [{
+    //             format: canvasFormat
+    //         }],
+    //     }
+    // })
     const encoder = device.createCommandEncoder();
     const renderPass = encoder.beginRenderPass(
         {
@@ -111,7 +122,7 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
         }
     )
 
-    renderPass.setPipeline(Pipeline);
+    renderPass.setPipeline(pipeline);
     renderPass.setBindGroup(0, bindGroupObj.bindGroup);
     renderPass.setVertexBuffer(0, vertexBuffer);
     renderPass.draw(6);

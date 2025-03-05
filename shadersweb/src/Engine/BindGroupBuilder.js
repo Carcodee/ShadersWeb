@@ -18,7 +18,6 @@ export class BindGroupBuilder{
     AddSampler(binding, visibility, sampler){
         this.bindGroupLayoutEntries.push({binding, visibility, sampler : {}})
         this.bindGroupEntries.push({binding: binding, resource: sampler})
-
         return this;
     }
     Reset(){
