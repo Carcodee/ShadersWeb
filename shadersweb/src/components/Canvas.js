@@ -107,41 +107,44 @@ fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
 			<ShaderEditor
 				shaderCode={shaderCode}
 				handleShaderCode={handleShaderCode}
+				style={styles.editor}
 			/>
 		</div>
 	);
 }
 
 const styles = {
+	editor: {
+		paddingLeft: "10px",
+	},
 	container: {
 		display: "flex",
-		justifyContent: "space-between",
-		height: "90%",
+		borderRadius: "20px",
+		margin: "auto",
+		width: "95%",
+		background: "rgb(166, 158, 158)",
+		border: "20px rgb(166, 158, 158) solid",
 	},
 	playerWindow: {
-		border: "2px solid #333",
-		borderRadius: "2px",
 		overflow: "hidden",
 		width: "50%",
-		height: "90%",
 		display: "flex",
 		flexDirection: "column",
-		justifyContent: "space-between",
+		borderRadius: "10px",
 	},
 	canvasContainer: {
 		flex: 1,
 	},
 	controls: {
 		padding: "10px",
-		backgroundColor: "#222",
+		backgroundColor: "rgb(15, 15, 15)",
 		color: "#fff",
 		textAlign: "center",
 		display: "flex",
-		justifyContent: "space-between",
 		alignItems: "center",
 	},
 	fpsCounter: {
-		marginLeft: "10px",
+		marginLeft: "20px",
 		fontSize: "14px",
 	},
 };
