@@ -1,23 +1,3 @@
-// import React from "react";
-
-// import { CreateWebGPUCanvas } from "../Engine/Core";
-// import { useEffect, useState } from "react";
-
-// function CanvasWidget() {
-// 	const canvasElement = useState(null);
-
-// 	useEffect(() => {
-// 		CreateWebGPUCanvas(800, 800).then((canvas) => {
-// 			if (canvasElement.current) {
-// 				canvasElement.current.appendChild(canvas);
-// 			}
-// 		});
-// 	});
-
-// 	return <div ref={canvasElement}></div>; // This will now show the actual canvas
-// }
-
-// export default CanvasWidget;
 import React, { useEffect, useRef, useState } from "react";
 import { CreateWebGPUCanvas } from "../Engine/Core";
 import ShaderEditor from "./Editor";
@@ -30,7 +10,6 @@ function CanvasWidget() {
 	const prevTimeRef = useRef(0);
 	const frameCount = useRef(0);
 	const [shaderCode, setShaderCode] = useState(`
-
 struct VertexIn {
     @location(0) pos: vec2f,
     @location(1) uv: vec2f,
@@ -68,7 +47,7 @@ fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
 		let canvasInstance;
 		const canvasContainer = canvasElement.current; // Capture the current ref value
 
-		CreateWebGPUCanvas(800, 800, shaderCode).then((canvas) => {
+		CreateWebGPUCanvas(750, 750, shaderCode).then((canvas) => {
 			canvasInstance = canvas;
 			if (canvasContainer) {
 				canvasContainer.appendChild(canvas);
@@ -112,7 +91,7 @@ fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
 
 	const handleShaderCode = (value) => {
 		setShaderCode(value);
-	}
+	};
 
 	return (
 		<div style={styles.container}>
@@ -125,7 +104,10 @@ fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
 					<span style={styles.fpsCounter}>FPS: {fps}</span>
 				</div>
 			</div>
-			<ShaderEditor shaderCode={shaderCode} handleShaderCode={handleShaderCode}/>
+			<ShaderEditor
+				shaderCode={shaderCode}
+				handleShaderCode={handleShaderCode}
+			/>
 		</div>
 	);
 }
@@ -134,14 +116,14 @@ const styles = {
 	container: {
 		display: "flex",
 		justifyContent: "space-between",
-		height: "100vh",
+		height: "90%",
 	},
 	playerWindow: {
 		border: "2px solid #333",
-		borderRadius: "8px",
+		borderRadius: "2px",
 		overflow: "hidden",
-		width: "800px",
-		height: "830px",
+		width: "50%",
+		height: "90%",
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "space-between",

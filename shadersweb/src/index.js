@@ -1,14 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './components/App';
-import CanvasWidget from './components/Canvas';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import CanvasWidget from "./components/Canvas";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <div id="title">
-    <App />
-    <CanvasWidget />
-  </div>
+	<>
+		<Header />
+		<div>
+			<CanvasWidget />
+		</div>
+		<Footer />
+	</>
 );
-
