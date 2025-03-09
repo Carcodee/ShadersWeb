@@ -21,11 +21,10 @@ function ShaderEditor({ shaderCode, handleShaderCode }) {
 
 const styles = {
 	editorContainer: {
-		width: "50%",
+		width: "60%",
 		border: "10px solid rgb(30, 30, 30)",
 		display: "flex",
 		flexDirection: "column",
-		justifyContent: "space-between",
 		borderRadius: "10px",
 		marginLeft: "10px",
 	},

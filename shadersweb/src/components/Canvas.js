@@ -46,8 +46,9 @@ fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
 	useEffect(() => {
 		let canvasInstance;
 		const canvasContainer = canvasElement.current; // Capture the current ref value
-
-		CreateWebGPUCanvas(750, 750, shaderCode).then((canvas) => {
+		let len = 750;
+		let wid = 750;
+		CreateWebGPUCanvas(len, wid, shaderCode).then((canvas) => {
 			canvasInstance = canvas;
 			if (canvasContainer) {
 				canvasContainer.appendChild(canvas);
@@ -114,32 +115,28 @@ fn fragmentMain(inData: VertexOut) -> @location(0) vec4f {
 }
 
 const styles = {
-	editor: {
-		paddingLeft: "10px",
-	},
 	container: {
 		display: "flex",
 		borderRadius: "5px",
-		margin: "auto",
 		width: "95%",
+		background: "#f5f5f5",
+		border: "5px #f5f5f5 solid",
 		justifyContent: "space-between",
-		background: "rgb(166, 158, 158)",
-		border: "5px rgb(166, 158, 158) solid",
+		paddingTop: "5vh",
 	},
 	playerWindow: {
 		display: "block",
 		overflow: "hidden",
-
 		display: "flex",
 		flexDirection: "column",
 		borderRadius: "10px",
 	},
 	canvasContainer: {
-		flex: 1,
+		display: "flex",
 	},
 	controls: {
 		padding: "10px",
-		backgroundColor: "rgb(15, 15, 15)",
+		backgroundColor: "rgb(100,100,100)",
 		color: "#fff",
 		textAlign: "center",
 		display: "flex",
