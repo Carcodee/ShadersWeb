@@ -2,6 +2,7 @@
 export class Core{
     device;
     adapter;
+    gpu;
     async Init(){
         if (!navigator.gpu) {
             throw new Error("WebGPU not supported on this browser.");
@@ -14,5 +15,9 @@ export class Core{
         if (!this.device) {
             throw new Error("No appropiate device.");
         }
+    }
+    SetGpu(){
+        this.gpu = navigator.gpu;
+        return this.gpu;
     }
 }

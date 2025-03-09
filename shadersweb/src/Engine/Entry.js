@@ -8,6 +8,7 @@ import { ResourceManager } from "./RenderGraph";
 import { EngineObjects } from "./EngineObjects";
 
 
+
 export async function CreateWebGPUCanvas (width, height, shaderCode){
 
     let canvas = document.createElement("canvas");
@@ -16,6 +17,7 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
 
     const core = new Core();
     await core.Init();
+    const gpu = core.SetGpu();
 
     const device = core.device;
 
@@ -56,6 +58,7 @@ export async function CreateWebGPUCanvas (width, height, shaderCode){
         label: "Base Shader",
         code: shaderCode,
     });
+
 
     const bufferSize = 4 * 4; //vec4
     const uniformBuffer = EngineUtils.CreateBuffer(device, "BufferTest", bufferSize, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST);

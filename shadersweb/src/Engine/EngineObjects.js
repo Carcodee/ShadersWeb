@@ -52,6 +52,7 @@ export const EngineObjects = {
 
             const imageBitmap = await EngineUtils.LoadImageBitmap(this.url);
 
+            const gpu = resManager.core.gpu;
             this.textureObj = resManager.GetTexture(
                 this.name,
                 GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,

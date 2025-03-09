@@ -51,7 +51,7 @@ export class RenderNode{
         this.device = device;
     }
     SetShaderCode(shaderCode){
-        this.shaderCode;
+        this.shaderCode = shaderCode;
     }
     Build(){
 

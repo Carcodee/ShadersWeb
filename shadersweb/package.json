@@ -16,7 +16,7 @@
     "react-scripts": "5.0.1",
     "three": "^0.173.0",
     "web-vitals": "^2.1.4",
-    "wgsl_reflect": "^1.1.0"
+    "wgsl_reflect": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -43,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@webgpu/types": "^0.1.55",
     "raw-loader": "^4.0.2"
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
