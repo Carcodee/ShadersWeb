@@ -1,9 +1,11 @@
 import React from "react";
+import CreateShaderButton from "./Buttons/CreateShaderButton";
 
 function Home() {
 	return (
 		<div style={styles.homePage}>
 			<h1 style={styles.title}>Shaders-Web++</h1>
+			<CreateShaderButton/>
 		</div>
 	);
 }

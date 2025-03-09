@@ -5,13 +5,15 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import CanvasWidget from "./components/Canvas";
+import BackHomeButton from "./components/Buttons/BackHomeButton";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-const App = () => {
+const MainPage = () => {
 	const [showCanvas, setShowCanvas] = useState(false);
-
 	const toggleCanvas = () => {
 		setShowCanvas(!showCanvas);
 	};
+
 	return (
 		<>
 			<Header />
@@ -26,6 +28,30 @@ const App = () => {
 		</>
 	);
 };
+const ShaderPage = () => {
+	return (
+		<>
+			<Header />
+			<main>
+				<div className="shader-page-container" style={styles.ShaderPage}>
+		  			<CanvasWidget />
+		  			<BackHomeButton/>
+				</div>
+			</main>
+            <Footer />
+		</>
+	);
+}
+const App = () => {
+	return (
+	  <BrowserRouter>
+		<Routes>
+		  <Route path="/" element={<MainPage />} />
+		  <Route path="/shader" element={<ShaderPage />} />
+		</Routes>
+	  </BrowserRouter>
+	);
+  };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
@@ -37,4 +63,13 @@ const styles = {
 		height: "10%",
 		border: "none",
 	},
+	ShaderPage: {
+		width: "100%",
+		minHeight: "100vh",
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		justifyContent: "center",
+		background: "#f5f5f5",
+	}
 };

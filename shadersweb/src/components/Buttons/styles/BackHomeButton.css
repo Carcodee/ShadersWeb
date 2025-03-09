@@ -1,0 +1,13 @@
+.backHomeButton {
+    background: #00193d;
+    color: white;
+    padding: 20px 60px;
+    font-size: 25px;
+    border-radius: 10px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    cursor: pointer;
+}
