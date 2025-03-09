@@ -119,15 +119,17 @@ const styles = {
 	},
 	container: {
 		display: "flex",
-		borderRadius: "20px",
+		borderRadius: "5px",
 		margin: "auto",
 		width: "95%",
+		justifyContent: "space-between",
 		background: "rgb(166, 158, 158)",
-		border: "20px rgb(166, 158, 158) solid",
+		border: "5px rgb(166, 158, 158) solid",
 	},
 	playerWindow: {
+		display: "block",
 		overflow: "hidden",
-		width: "50%",
+
 		display: "flex",
 		flexDirection: "column",
 		borderRadius: "10px",

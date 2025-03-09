@@ -23,6 +23,7 @@ const styles = {
 	editorContainer: {
 		width: "50%",
 		border: "10px solid rgb(30, 30, 30)",
+		display: "flex",
 		flexDirection: "column",
 		justifyContent: "space-between",
 		borderRadius: "10px",
