@@ -7,8 +7,9 @@
         });
     },
 
-    CreateTexture(device, width, height, format, usage) {
+    CreateTexture(device, name, usage, format, width, height) {
         return device.createTexture({
+            label: name,
             size: [width, height, 1],
             format: format,
             usage: usage,
@@ -19,25 +20,5 @@
         const blob = await res.blob();
         return await createImageBitmap(blob, { colorSpaceConversion: 'none' });
     },
-    async LoadTexture(device, url) {
-
-        const imageBitmap = await this.LoadImageBitmap(url);
-
-        const texture = this.CreateTexture(device,
-            imageBitmap.width,
-            imageBitmap.height,
-            "rgba8unorm",
-            GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT);
-
-        device.queue.copyExternalImageToTexture(
-            { source: imageBitmap, flipY:true},
-            { texture: texture },
-            [imageBitmap.width, imageBitmap.height, 1]
-        );
-
-        const textureView = texture.createView();
-
-        return { texture, textureView };
-    }
 
 };

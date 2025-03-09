@@ -1,10 +1,42 @@
-﻿import {exp} from "three/tsl";
+﻿import { EngineUtils } from "./EngineUtils";
+import {EngineObjects} from "./EngineObjects";
 
 export class ResourceManager{
-    textures= []
-    storageImages= []
-    samplers= []
-    buffers= []
+
+    constructor(core) {
+        this.core = core;
+        this.device = this.core.device;
+        this.texturesView= {}
+        this.textures= {}
+        this.storageImages= {}
+        this.samplers= {}
+        this.buffers= {}
+    }
+
+    GetTexture(name, usage, format, width, height){
+        const id = Object.keys(this.textures);
+        this.textures[id] = new EngineObjects.TextureObj(this.device, name, usage, format, width, height,id);
+        return this.textures[id];
+    }
+    GetTextureView(texture){
+        this.texturesView[texture.id] =  new EngineObjects.TextureViewObj(texture);
+        return this.texturesView[texture.id];
+    }
+    GetTextureAndView(name, usage, format, width, height){
+        const texture = this.GetTexture(name, usage, format, width, height);
+        const view = this.GetTextureView(texture);
+        return {texture, view};
+    }
+    GetBuffer(name, usage, size){
+        const id = Object.keys(this.buffers);
+        this.buffers[id] = new EngineObjects.BufferObj(this.device, name, size, usage, id);
+        return this.buffers[id];
+    }
+
+    CreateDefaultResources(){
+
+    }
+
 
 }
 export class RenderNode{
@@ -12,7 +44,6 @@ export class RenderNode{
     name;
     device;
     shaderCode;
-
     pipeline;
     bindGroupObj;
 
@@ -34,9 +65,9 @@ export class RenderNode{
 }
 export class RenderGraph{
 
-    device;
     renderNodes = {};
     currentEncoder;
+
     constructor(device) {
         this.device = device;
     }

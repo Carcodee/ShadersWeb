@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CreateWebGPUCanvas } from "../Engine/Core";
+import { CreateWebGPUCanvas } from "../Engine/Entry";
 import ShaderEditor from "./Editor";
 
 function CanvasWidget() {
