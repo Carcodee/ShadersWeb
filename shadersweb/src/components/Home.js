@@ -5,7 +5,12 @@ function Home() {
 	return (
 		<div style={styles.homePage}>
 			<h1 style={styles.title}>Shaders-Web++</h1>
-			<CreateShaderButton/>
+			<h3 style={styles.subtitle}>Why did we create Shaders-Web?</h3>
+			<p style={styles.paragraph}>
+				To learn and share! We wanted to create an interactive platform that
+				allowed users to create their own unique shaders.
+			</p>
+			<CreateShaderButton />
 		</div>
 	);
 }
@@ -14,9 +19,9 @@ export default Home;
 
 const styles = {
 	homePage: {
-		background: "rgb(166, 158, 158)",
+		background: "rgb(195, 195, 195)",
 		height: "95vh",
-		width: "95vw",
+		width: "99vw",
 		display: "block",
 		margin: "auto",
 		borderRadius: "5px",
@@ -27,6 +32,14 @@ const styles = {
 		fontSize: "75px",
 		margin: "0",
 		paddingTop: "5%",
-		fontFamily: "Helvetica",
+		fontFamily: "Arial",
+	},
+	paragraph: {
+		color: "black",
+		textAlign: "center",
+	},
+	subtitle: {
+		color: "black",
+		textAlign: "center",
 	},
 };
