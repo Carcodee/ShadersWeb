@@ -1,5 +1,7 @@
 ﻿
 import { WgslReflect } from "wgsl_reflect/wgsl_reflect.module";
+import {BindGroupBuilder} from "./BindGroupBuilder";
+import {ResourceManager} from "./RenderGraph";
 
 export class Shader{
 
@@ -10,6 +12,7 @@ export class Shader{
     textures = [];
     storageImages = [];
     buffers = [];
+    bindGroupObject = {};
 
     constructor(shaderCode) {
         this.shaderCode = shaderCode;
@@ -56,4 +59,25 @@ fn vertexMain(inData: VertexIn) -> VertexOut {
             this.buffers.push({name: buffer.name, binding: buffer .binding, group: buffer .group})
         }
     }
+
+    Create(resManager){
+        this.shaderModule = resManager.device.createShaderModule({
+            label: "Base Shader",
+            code: this.shaderCode,
+        });
+        const bindGroupBuilder = new BindGroupBuilder();
+        for (const sampler of this.samplers) {
+            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+        }
+        for (const sampler of this.samplers) {
+            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+        }
+        for (const sampler of this.samplers) {
+            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+        }
+        for (const sampler of this.samplers) {
+            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+        }
+    }
 }
+
