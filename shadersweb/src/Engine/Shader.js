@@ -69,8 +69,8 @@ fn vertexMain(inData: VertexIn) -> VertexOut {
         for (const sampler of this.samplers) {
             bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
         }
-        for (const sampler of this.samplers) {
-            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+        for (const texture of this.textures) {
+            bindGroupBuilder.AddImage(texture.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
         }
         for (const sampler of this.samplers) {
             bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));

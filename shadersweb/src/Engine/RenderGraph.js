@@ -23,7 +23,7 @@ export class ResourceManager{
     GetTexture(name, usage, format, width, height){
         const id = Object.keys(this.textures);
         this.textures[id] = new EngineObjects.TextureObj(this.device, name, usage, format, width, height,id);
-        this.texNames[id] = name;
+        this.texNames[name] = id;
         return this.textures[id];
     }
     GetTextureView(texture){
@@ -38,7 +38,7 @@ export class ResourceManager{
     GetBuffer(name, usage, size){
         const id = Object.keys(this.buffers);
         this.buffers[id] = new EngineObjects.BufferObj(this.device, name, size, usage, id);
-        this.buffersNames[id] = name;
+        this.buffersNames[name] = id;
         return this.buffers[id];
     }
     GetSampler(name, magFilter, minFilter){
@@ -51,6 +51,30 @@ export class ResourceManager{
         return this.samplers[id];
     }
 
+    GetTextureByName(name){
+        if (name in this.texNames){
+            return this.textures[this.texNames[name]];
+        }
+        if (name in this.storageNames){
+            return this.storageImages[this.storageImages[name]];
+        }
+        console.log("Invalid name");
+        return null;
+    }
+    GetBufferByName(name){
+        if (name in this.buffersNames){
+            return this.buffers[this.buffersNames[name]];
+        }
+        console.log("Invalid name");
+        return null;
+    }
+    GetSamplerByName(name){
+        if (name in this.samplersNames){
+            return this.samplersNames[this.samplersNames[name]];
+        }
+        console.log("Invalid name");
+        return null;
+    }
 
     CreateDefaultResources(){
         this.GetBuffer("default-buffer", GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, 1);
