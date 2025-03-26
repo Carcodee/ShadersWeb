@@ -1,6 +1,7 @@
 ﻿import { EngineUtils } from "./EngineUtils";
 import {EngineObjects} from "./EngineObjects";
 import {sampler} from "three/tsl";
+import {Shader} from "./Shader";
 
 export class ResourceManager{
 
@@ -105,6 +106,7 @@ export class RenderNode{
     shaderCode;
     pipeline;
     bindGroupObj;
+    shader;
 
     constructor(device) {
         this.device = device;
@@ -113,7 +115,7 @@ export class RenderNode{
         this.shaderCode = shaderCode;
     }
     Build(){
-
+        this.shader = new Shader()
 
 
     }

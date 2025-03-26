@@ -27,7 +27,7 @@ export class PipelineBuilder{
 
     Build(device){
 
-        const pipeline = device.createRenderPipeline({
+        return device.createRenderPipeline({
             label: "Graphics Pipeline",
             layout: this.pipelineLayout,
             vertex: {
@@ -41,7 +41,6 @@ export class PipelineBuilder{
                 targets: this.colorAttachmentTargets,
             }
         });
-        return pipeline;
     }
 
 

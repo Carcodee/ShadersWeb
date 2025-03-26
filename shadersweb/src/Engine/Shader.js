@@ -45,6 +45,10 @@ fn vertexMain(inData: VertexIn) -> VertexOut {
     }
 
     ReflectCode(){
+        this.samplers.clear();
+        this.textures.clear();
+        this.storageImages.clear();
+        this.buffers.clear();
         const reflect = new WgslReflect(shaderCode);
         for (const sampler of reflect.samplers) {
             this.samplers.push({name: sampler.name, binding: sampler.binding, group: sampler.group})
@@ -61,6 +65,7 @@ fn vertexMain(inData: VertexIn) -> VertexOut {
     }
 
     Create(resManager){
+        this.ReflectCode();
         this.shaderModule = resManager.device.createShaderModule({
             label: "Base Shader",
             code: this.shaderCode,
