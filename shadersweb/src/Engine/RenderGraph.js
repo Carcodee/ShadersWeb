@@ -18,6 +18,7 @@ export class ResourceManager{
         this.storageNames = {};
         this.samplersNames = {};
         this.buffersNames = {};
+        this.CreateDefaultResources();
     }
 
     GetTexture(name, usage, format, width, height){
@@ -78,13 +79,21 @@ export class ResourceManager{
 
     CreateDefaultResources(){
         this.GetBuffer("default-buffer", GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, 1);
+        this.GetSampler("default-sampler", "linear", "linear");
         const texture = this.GetTexture(
             "default-texture",
             GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
             "rgba8unorm",
             256,
             256);
+        const storageTexture = this.GetTexture(
+            "default-storage",
+            GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING,
+            "rgba32float",
+            256,
+            256);
         this.GetTextureView(texture)
+        this.GetTextureView(storageTexture)
     }
 
 

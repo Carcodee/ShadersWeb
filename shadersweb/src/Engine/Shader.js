@@ -67,16 +67,16 @@ fn vertexMain(inData: VertexIn) -> VertexOut {
         });
         const bindGroupBuilder = new BindGroupBuilder();
         for (const sampler of this.samplers) {
-            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSamplerByName("default-sampler"));
         }
         for (const texture of this.textures) {
-            bindGroupBuilder.AddImage(texture.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+            bindGroupBuilder.AddImage(texture.binding, GPUShaderStage.FRAGMENT, resManager.GetTextureByName("default-texture"));
         }
-        for (const sampler of this.samplers) {
-            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+        for (const storageImg of this.storageImages) {
+            bindGroupBuilder.AddImage(storageImg.binding, GPUShaderStage.FRAGMENT, resManager.GetTextureByName("default-storage"));
         }
-        for (const sampler of this.samplers) {
-            bindGroupBuilder.AddSampler(sampler.binding, GPUShaderStage.FRAGMENT, resManager.GetSampler("default-sampler", "linear", "linear"));
+        for (const buffer of this.buffers) {
+            bindGroupBuilder.AddBuffer(buffer.binding, GPUShaderStage.FRAGMENT,  { type: "uniform" },{ buffer : resManager.GetBufferByName("default-sampler")});
         }
     }
 }
